@@ -1,0 +1,10 @@
+{
+  "name": "Hubref",
+  "description": "Simple JSON store",
+  "keywords": [
+    "json",
+    "go"
+  ],
+  "website": "https://hubref.herokuapp.com",
+  "repository": "http://github.com/skatiyar/hubref"
+}
