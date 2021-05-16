@@ -17,7 +17,7 @@ func Connect(dbURL string) error {
 
 	instance := pg.Connect(opts)
 	ctx := context.Background()
-	if err := db.Ping(ctx); err != nil {
+	if err := instance.Ping(ctx); err != nil {
 		return err
 	}
 
