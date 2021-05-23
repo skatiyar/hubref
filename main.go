@@ -9,7 +9,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/skatiyar/hubref/controllers"
 	"github.com/skatiyar/hubref/database"
-	"github.com/skatiyar/hubref/middlewares"
+	m "github.com/skatiyar/hubref/middlewares"
 )
 
 var (
@@ -34,13 +34,13 @@ func main() {
 	}
 
 	router := httprouter.New()
-	router.GET("/", middlewares.BasicAuth(controllers.Homepage, user, pass))
-	router.GET("/api/paths", middlewares.BasicAuth(controllers.GetPaths, user, pass))
-	router.GET("/api/paths/*path", middlewares.BasicAuth(controllers.GetPath, user, pass))
-	router.POST("/api/paths", middlewares.BasicAuth(controllers.CreatePath, user, pass))
-	router.PUT("/api/paths/*path", middlewares.BasicAuth(controllers.EditPath, user, pass))
-	router.DELETE("/api/paths/*path", middlewares.BasicAuth(controllers.DeletePath, user, pass))
-	router.GET("/data/*path", controllers.GetPath)
+	router.GET("/", m.BasicAuth(controllers.Homepage, user, pass))
+	router.GET("/api/paths", m.BasicAuth(m.AcceptJSON(controllers.GetPaths), user, pass))
+	router.GET("/api/paths/*path", m.BasicAuth(m.AcceptJSON(controllers.GetPath), user, pass))
+	router.POST("/api/paths", m.BasicAuth(m.AcceptJSON(controllers.CreatePath), user, pass))
+	router.PUT("/api/paths/*path", m.BasicAuth(m.AcceptJSON(controllers.EditPath), user, pass))
+	router.DELETE("/api/paths/*path", m.BasicAuth(m.AcceptJSON(controllers.DeletePath), user, pass))
+	router.GET("/data/*path", controllers.GetPathData)
 	router.ServeFiles("/assets/*filepath", http.Dir("assets"))
 
 	log.Fatal(http.ListenAndServe(":"+port, router))

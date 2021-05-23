@@ -9,10 +9,11 @@ import (
 	"github.com/skatiyar/hubref/utilities"
 )
 
-func GetPath(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func GetPathData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	path := p.ByName("path")
 	db, dbErr := database.GetDB()
 	if dbErr != nil {
+		w.Header().Set("content-type", "application/json")
 		utilities.SendError(w, errors.DBError(dbErr.Error()))
 		return
 	}
@@ -20,6 +21,7 @@ func GetPath(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	var result database.Path
 	queryErr := db.Model(&result).Where("path.path = ?", path).Select()
 	if queryErr != nil {
+		w.Header().Set("content-type", "application/json")
 		if database.NilRowError(queryErr) {
 			utilities.SendError(w, errors.NotFoundError(path+" not found"))
 		} else {
@@ -28,5 +30,7 @@ func GetPath(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	utilities.Send200(w, result)
+	w.Header().Set("content-type", result.Type)
+	w.WriteHeader(200)
+	w.Write([]byte(result.Data))
 }
