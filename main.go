@@ -20,8 +20,8 @@ var (
 )
 
 func main() {
-	if port == "" || user == "" || pass == "" {
-		log.Fatal("PORT, USERNAME & PASSWORD must be set")
+	if port == "" {
+		log.Fatal("PORT must be set")
 	}
 	if dbURL == "" {
 		log.Fatal("DATABASE_URL must be set")
@@ -34,6 +34,9 @@ func main() {
 	}
 
 	router := httprouter.New()
+	router.PanicHandler = dieHard
+
+	// Routes
 	router.GET("/", m.BasicAuth(controllers.Homepage, user, pass))
 	router.GET("/api/paths", m.BasicAuth(m.AcceptJSON(controllers.GetPaths), user, pass))
 	router.GET("/api/paths/*path", m.BasicAuth(m.AcceptJSON(controllers.GetPath), user, pass))
@@ -41,7 +44,13 @@ func main() {
 	router.PUT("/api/paths/*path", m.BasicAuth(m.AcceptJSON(controllers.EditPath), user, pass))
 	router.DELETE("/api/paths/*path", m.BasicAuth(m.AcceptJSON(controllers.DeletePath), user, pass))
 	router.GET("/data/*path", controllers.GetPathData)
+	router.GET("/help", controllers.Helppage)
 	router.ServeFiles("/assets/*filepath", http.Dir("assets"))
 
 	log.Fatal(http.ListenAndServe(":"+port, router))
+}
+
+func dieHard(w http.ResponseWriter, r *http.Request, err interface{}) {
+	log.Println(r.URL.Path, err)
+	w.WriteHeader(http.StatusInternalServerError)
 }

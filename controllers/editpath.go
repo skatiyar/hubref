@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/skatiyar/hubref/database"
@@ -25,7 +26,8 @@ func EditPath(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	pathRes := database.Path{
-		Data: pathReq.Data,
+		Data:      pathReq.Data,
+		UpdatedAt: time.Now(),
 	}
 	uResult, uResultErr := db.Model(&pathRes).
 		Where("path.path = ?", path).

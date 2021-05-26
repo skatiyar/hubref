@@ -14,11 +14,12 @@ package errors
 
 import (
 	"errors"
+	"net/http"
 )
 
 type Error struct {
 	Code     int
-	Message  string
+	Class    string
 	RawError error
 }
 
@@ -28,32 +29,32 @@ func (e Error) Error() string {
 
 func InvalidDataError(text string) error {
 	return Error{
-		Code:     400,
-		Message:  "Invalid Data",
+		Code:     http.StatusBadRequest,
+		Class:    "Invalid Data",
 		RawError: errors.New(text),
 	}
 }
 
 func DBError(text string) error {
 	return Error{
-		Code:     500,
-		Message:  "DB Error",
+		Code:     http.StatusInternalServerError,
+		Class:    "DB Error",
 		RawError: errors.New(text),
 	}
 }
 
 func InternalServerError(text string) error {
 	return Error{
-		Code:     500,
-		Message:  "Internal Server Error",
+		Code:     http.StatusInternalServerError,
+		Class:    "Internal Server Error",
 		RawError: errors.New(text),
 	}
 }
 
 func NotFoundError(text string) error {
 	return Error{
-		Code:     404,
-		Message:  "Record Not Found",
+		Code:     http.StatusNotFound,
+		Class:    "Record Not Found",
 		RawError: errors.New(text),
 	}
 }
