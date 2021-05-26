@@ -1,2 +1,2 @@
-# hubref
+# Hubref
 Simple JSON store

@@ -31,6 +31,7 @@ func GetPathData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	w.Header().Set("content-type", result.Type)
+	w.Header().Set("last-modified", result.UpdatedAt.UTC().Format(http.TimeFormat))
 	w.WriteHeader(200)
 	w.Write([]byte(result.Data))
 }
